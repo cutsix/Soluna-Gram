@@ -1,0 +1,127 @@
+# === Python 基础 ===
+
+#doc
+.doc
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyc
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Translations
+*.mo
+*.pot
+
+# Type checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+
+# === IDE / Editor ===
+.idea/
+.vscode/
+
+# === 环境 ===
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+work/
+
+# pyenv
+.python-version
+
+# PDM（已移除，防残留）
+pdm.lock
+.pdm-python
+__pypackages__/
+
+# === Soluna-Gram 项目运行时 ===
+
+# 运行时数据目录
+data/
+
+# Telegram session 文件
+*.session
+*.session-journal
+
+# 运行时配置（不入库，由 config.gen.yml 模板生成）
+config.yml
+config.env
+
+# 用户自定义语言文件
+languages/custom.yml
+
+# 用户安装的插件（pagermaid/modules/ 是内置模块，plugins/ 是运行时安装的用户插件）
+plugins*/
+
+# 日志和错误报告
+*.log
+output.log
+unknown_errors.txt
+exception*.txt
+pagermaid*.txt
+
+# 部署相关（用户自定义）
+docker-compose.yml
+install.lock
+
+# 备份/导出产物
+pagermaid*.tar.gz
+
+# 杂项
+dump.rdb
+keyword.list
+qrcode.png

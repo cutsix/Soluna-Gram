@@ -1,0 +1,19 @@
+version: "2.0"
+services:
+  pagermaid:
+    build:
+      context: .
+      dockerfile: Dockerfile.alpine
+    image: soluna-gram:local
+    restart: always
+    container_name: pagermaid
+    hostname: pagermaid
+#    ports:                 # 是否开启网页控制面板
+#      - "3333:3333"
+    volumes:
+      - ./data:/pagermaid/workdir/data
+    environment:
+#      - WEB_ENABLE=true
+#      - WEB_SECRET_KEY=控制台密码
+      - WEB_HOST=0.0.0.0
+#      - WEB_PORT=3333

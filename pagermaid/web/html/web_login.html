@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Soluna-Gram - Login</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f4efe6;
+            --card: #fffaf2;
+            --line: #d7c6a6;
+            --text: #1f1b16;
+            --muted: #65594c;
+            --accent: #b85c38;
+            --accent-soft: #f5dfd2;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Helvetica Neue", "PingFang SC", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(184, 92, 56, 0.15), transparent 35%),
+                linear-gradient(135deg, var(--bg), #efe6d7 60%, #e8dcc9);
+            color: var(--text);
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+
+        .panel {
+            width: min(560px, 100%);
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(57, 42, 24, 0.12);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 18px 0 10px;
+            font-size: clamp(28px, 4vw, 40px);
+            line-height: 1.1;
+        }
+
+        p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .tips {
+            margin-top: 28px;
+            padding: 20px;
+            border-radius: 18px;
+            background: #fff;
+            border: 1px solid rgba(215, 198, 166, 0.9);
+        }
+
+        .tips strong {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        code {
+            padding: 2px 6px;
+            border-radius: 6px;
+            background: #f4ede1;
+            font-family: "SFMono-Regular", "SFMono-Regular", Consolas, monospace;
+        }
+    </style>
+</head>
+<body>
+<main class="panel">
+    <span class="badge">Session String Only</span>
+    <h1>QR 登录已停用</h1>
+    <p>Soluna-Gram 当前不再提供二维码网页登录。请先通过 session string 完成授权，再返回后台管理页面使用 Web 控制台。</p>
+    <section class="tips">
+        <strong>建议流程</strong>
+        <p>1. 先在本地生成并配置 <code>STRING_SESSION</code>。</p>
+        <p>2. 重新启动 Soluna-Gram，让程序直接完成授权。</p>
+        <p>3. 如已启用 <code>WEB_ENABLE</code>，再访问后台页面进行管理。</p>
+    </section>
+</main>
+</body>
+</html>
