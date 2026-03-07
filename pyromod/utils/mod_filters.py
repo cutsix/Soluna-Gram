@@ -1,6 +1,6 @@
 from pyrogram.filters import create
 
-from pagermaid.enums import Message
+from solgram.enums import Message
 
 
 async def reacted_filter(_, __, m: Message):

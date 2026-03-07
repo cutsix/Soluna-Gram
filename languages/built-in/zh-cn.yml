@@ -1,8 +1,6 @@
 ---
 #Chinese (Simplified)
 #main
-web_TypeError: 出错了呜呜呜 ~ Web 界面配置绑定到了一个无效地址。
-web_KeyError: 出错了呜呜呜 ~ 配置文件中缺少 Web 界面配置。
 PhoneNumberInvalidError: 出错了呜呜呜 ~ 输入的电话号码无效。 请确保附加国家代码。
 module: 模块
 error: 加载出错

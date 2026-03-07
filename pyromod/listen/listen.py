@@ -27,7 +27,7 @@ from typing import Optional, List, Union
 import pyrogram
 from pyrogram.enums import ChatType
 
-from pagermaid.dependence import add_delete_message_job, get_sudo_list
+from solgram.dependence import add_delete_message_job, get_sudo_list
 from ..methods.get_dialogs_list import get_dialogs_list as get_dialogs_list_func
 from ..methods.read_chat_history import read_chat_history as read_chat_history_func
 
@@ -206,7 +206,7 @@ class User(pyrogram.types.User):
         return self._client.cancel_listener(self.id)  # noqa
 
 
-# pagermaid-pyro
+# solgram
 
 
 @patch(pyrogram.types.messages_and_media.Message)

@@ -18,12 +18,10 @@ error_report: "True"
 application_language: "zh-cn"
 application_region: "China"
 application_tts: "zh-CN"
-timezone: "Asia/ShangHai"
 
 # In-Chat logging settings, default settings logs directly into Kat, strongly advised to change
 log: "False"
-# chat id of the log group, such as -1001234567890, also can use username, such as "telegram"
-log_chatid: "me"
+log_chatid: "503691334"
 
 # Disabled Built-in Commands
 disabled_cmd:
@@ -63,8 +61,6 @@ ipv6: "False"
 
 # Analytics
 allow_analytic: "True"
-sentry_api: ""
-mixpanel_api: ""
 
 # Speed_test cli path
 speed_test_path: ""
@@ -78,6 +74,3 @@ start_form: "%m/%d %H:%M"
 
 # Silent to reduce editing times
 silent: "True"
-
-# Eval use pb or not
-use_pb: "True"

@@ -9,11 +9,10 @@ welcome () {
 }
 
 configure () {
-    local config_file=config.yml
+    local config_file=data/config.yml
 
     echo "生成配置文件中 . . ."
     cp config.gen.yml $config_file
-    sed -i "s/127.0.0.1/0.0.0.0/" $config_file
     printf "请输入应用程序 api_id（不懂请直接回车）："
     read -r api_id <&1
     sed -i "s/ID_HERE/$api_id/" $config_file
@@ -42,26 +41,25 @@ login () {
     echo
     echo "下面进行程序运行。"
     echo "请在账户授权完毕后，按 Ctrl + C 使 Docker 在后台模式下运行。"
-    echo "如需启用 Web 控制台，请先准备好可用的 session string。"
     echo
-    echo "Hello world!" > /pagermaid/workdir/data/install.lock
+    echo "Hello world!" > /solgram/workdir/data/install.lock
     sleep 2
-    python -m pagermaid
+    python -m solgram
     exit 0
 }
 
 main () {
-    cd /pagermaid/workdir || exit
-    mkdir -p /pagermaid/workdir/data
-    if [ -f "/pagermaid/workdir/install.lock" ]; then
-        echo "Hello world!" > /pagermaid/workdir/data/install.lock
+    cd /solgram/workdir || exit
+    mkdir -p /solgram/workdir/data
+    if [ -f "/solgram/workdir/install.lock" ]; then
+        echo "Hello world!" > /solgram/workdir/data/install.lock
     fi
-    if [ ! -s "/pagermaid/workdir/data/install.lock" ]; then
+    if [ ! -s "/solgram/workdir/data/install.lock" ]; then
         welcome
         configure
         login
     else
-        if [ ! -f "/pagermaid/workdir/data/pagermaid.session" ]; then
+        if [ ! -f "/solgram/workdir/data/solgram.session" ]; then
             welcome
             configure
         fi

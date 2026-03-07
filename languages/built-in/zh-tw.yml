@@ -1,8 +1,6 @@
 ---
 #Chinese (Simplified)
 #main
-web_TypeError: Error！Web 介面綁定了一個無效網址。
-web_KeyError: Error！設定檔缺少Web介面配置。
 PhoneNumberInvalidError: Error！電話號碼無效，請確定添加了國家/地區代碼。
 module: 模組
 error: 載入錯誤

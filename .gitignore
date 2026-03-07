@@ -69,6 +69,7 @@ dmypy.json
 # === IDE / Editor ===
 .idea/
 .vscode/
+.DS_Store
 
 # === 环境 ===
 .env
@@ -104,7 +105,7 @@ config.env
 # 用户自定义语言文件
 languages/custom.yml
 
-# 用户安装的插件（pagermaid/modules/ 是内置模块，plugins/ 是运行时安装的用户插件）
+# 用户安装的插件（solgram/modules/ 是内置模块，plugins/ 是运行时安装的用户插件）
 plugins*/
 
 # 日志和错误报告
@@ -112,14 +113,14 @@ plugins*/
 output.log
 unknown_errors.txt
 exception*.txt
-pagermaid*.txt
+solgram*.txt
 
 # 部署相关（用户自定义）
 docker-compose.yml
 install.lock
 
 # 备份/导出产物
-pagermaid*.tar.gz
+solgram*.tar.gz
 
 # 杂项
 dump.rdb

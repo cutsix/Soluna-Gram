@@ -5,10 +5,10 @@ ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     LANG=zh_CN.UTF-8 \
     SHELL=/bin/bash \
     PS1="\u@\h:\w \$ " \
-    PAGERMAID_DIR=/pagermaid \
+    SOLGRAM_DIR=/solgram \
     DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-c"]
-WORKDIR /pagermaid/workdir
+WORKDIR /solgram/workdir
 RUN source ~/.bashrc \
     ## 安装运行环境依赖，自编译建议修改为国内镜像源
 #   && sed -i 's/archive.ubuntu.com/mirrors.bfsu.edu.cn/g' /etc/apt/sources.list \
@@ -70,12 +70,12 @@ RUN source ~/.bashrc \
 #   && pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple \
     && python -m pip install --upgrade pip \
     ## 添加用户
-    && echo "pagermaid ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/pagermaid \
-    && useradd pagermaid -r -m -d /pagermaid -s /bin/bash \
-    && usermod -aG sudo,users pagermaid \
+    && echo "solgram ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/solgram \
+    && useradd solgram -r -m -d /solgram -s /bin/bash \
+    && usermod -aG sudo,users solgram \
     ## 克隆仓库
     && test -n "$SOLUNA_REPO_URL" \
-    && git clone -b "$SOLUNA_REPO_BRANCH" "$SOLUNA_REPO_URL" /pagermaid/workdir \
+    && git clone -b "$SOLUNA_REPO_BRANCH" "$SOLUNA_REPO_URL" /solgram/workdir \
     && git config --global pull.ff only \
     ## pip install
     && pip install -r requirements.txt \

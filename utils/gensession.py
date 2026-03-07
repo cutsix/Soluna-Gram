@@ -27,7 +27,7 @@ async def main():
 
     API_HASH = input("Please enter your API HASH: ")
     try:
-        async with Client("pagermaid", API_ID, API_HASH) as bot:
+        async with Client("solgram", API_ID, API_HASH) as bot:
             print("Generating a user session...")
             await bot.send_message(
                 "me",

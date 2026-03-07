@@ -1,6 +1,6 @@
 [project]
 name = "Soluna-Gram"
-version = "2.0.0"
+version = "0.1.1"
 description = "Telegram utility toolbox powered by Kurigram"
 authors = [
     {name = "sunmoon"},
@@ -18,12 +18,7 @@ dependencies = [
     "sqlitedict~=2.1.0",
     "casbin>=1.36.3",
     "sentry-sdk>=2.14.0",
-    "fastapi~=0.114.2",
-    "amis-python==1.0.8.post2",
-    "python-jose>=3.3.0",
-    "uvicorn~=0.30.6",
     "pydantic<2.0.0",
-    "starlette~=0.38.5",
 ]
 requires-python = ">=3.9.0"
 readme = "README.md"

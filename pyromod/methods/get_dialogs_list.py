@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from pyrogram import Client
 
-from pagermaid.common.cache import cache
+from solgram.common.cache import cache
 
 
 @cache(ttl=timedelta(hours=1))

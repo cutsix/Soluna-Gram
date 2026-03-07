@@ -1,12 +1,12 @@
 FROM python:alpine
 
-ENV PAGERMAID_DIR=/pagermaid
+ENV SOLGRAM_DIR=/solgram
 ENV TZ=Asia/Shanghai
 ENV SHELL=/bin/bash
 
-WORKDIR /pagermaid/workdir
+WORKDIR /solgram/workdir
 
-COPY ./ /pagermaid/workdir
+COPY ./ /solgram/workdir
 
 RUN apk add --no-cache git bash imagemagick libmagic curl tzdata neofetch libzbar figlet fortune openssl tini \
     && apk add --no-cache --update --virtual .build-deps gcc python3-dev musl-dev linux-headers \

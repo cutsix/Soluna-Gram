@@ -254,7 +254,7 @@ debian_require_install() {
 
 download_repo() {
     echo "下载 repository 中 . . ."
-    rm -rf /var/lib/pagermaid >>/dev/null 2>&1
+    rm -rf /var/lib/solgram >>/dev/null 2>&1
     if [ -z "$SOLUNA_REPO_URL" ]; then
         printf "请输入 Soluna-Gram 仓库地址（将克隆 release 分支）："
         read -r SOLUNA_REPO_URL <&1
@@ -263,9 +263,9 @@ download_repo() {
         echo "未提供仓库地址，安装终止。"
         exit 1
     fi
-    git clone -b "$SOLUNA_REPO_BRANCH" "$SOLUNA_REPO_URL" /var/lib/pagermaid >>/dev/null 2>&1
-    cd /var/lib/pagermaid >>/dev/null 2>&1
-    echo "Hello World!" >/var/lib/pagermaid/public.lock
+    git clone -b "$SOLUNA_REPO_BRANCH" "$SOLUNA_REPO_URL" /var/lib/solgram >>/dev/null 2>&1
+    cd /var/lib/solgram >>/dev/null 2>&1
+    echo "Hello World!" >/var/lib/solgram/public.lock
 }
 
 pypi_install() {
@@ -359,12 +359,12 @@ login_screen() {
     screen -S userbot -X quit >>/dev/null 2>&1
     screen -dmS userbot
     sleep 1
-    screen -x -S userbot -p 0 -X stuff "cd /var/lib/pagermaid && $PYV -m pagermaid"
+    screen -x -S userbot -p 0 -X stuff "cd /var/lib/solgram && $PYV -m solgram"
     screen -x -S userbot -p 0 -X stuff $'\n'
     sleep 3
-    if [ "$(ps -def | grep [p]agermaid | grep -v grep)" == "" ]; then
+    if [ "$(ps -def | grep [s]olgram | grep -v grep)" == "" ]; then
         echo "Soluna-Gram 运行时发生错误，错误信息："
-        cd /var/lib/pagermaid && $PYV -m pagermaid >err.log
+        cd /var/lib/solgram && $PYV -m solgram >err.log
         cat err.log
         screen -S userbot -X quit >>/dev/null 2>&1
         exit 1
@@ -387,15 +387,15 @@ login_screen() {
 
         sleep 2
         
-        if [ "$(ps -def | grep [p]agermaid | grep -v grep)" == "" ]; then
+        if [ "$(ps -def | grep [s]olgram | grep -v grep)" == "" ]; then
             echo "手机号输入错误！请确认您是否带了区号（中国号码为 +86 如 +8618888888888）"
-            screen -x -S userbot -p 0 -X stuff "cd /var/lib/pagermaid && $PYV -m pagermaid"
+            screen -x -S userbot -p 0 -X stuff "cd /var/lib/solgram && $PYV -m solgram"
             screen -x -S userbot -p 0 -X stuff $'\n'
             continue
         fi
 
         sleep 1
-        if [ "$(ps -def | grep [p]agermaid | grep -v grep)" == "" ]; then
+        if [ "$(ps -def | grep [s]olgram | grep -v grep)" == "" ]; then
             echo "Soluna-Gram 运行时发生错误，可能是因为发送验证码失败，请检查您的 API_ID 和 API_HASH"
             exit 1
         fi
@@ -439,14 +439,14 @@ systemctl_reload() {
     WantedBy=multi-user.target
     [Service]
     Type=simple
-    WorkingDirectory=/var/lib/pagermaid
-    ExecStart=$PYV -m pagermaid
+    WorkingDirectory=/var/lib/solgram
+    ExecStart=$PYV -m solgram
     Restart=always
-    " >/etc/systemd/system/pagermaid.service
-    chmod 755 pagermaid.service >>/dev/null 2>&1
+    " >/etc/systemd/system/solgram.service
+    chmod 755 solgram.service >>/dev/null 2>&1
     systemctl daemon-reload >>/dev/null 2>&1
-    systemctl start pagermaid >>/dev/null 2>&1
-    systemctl enable pagermaid >>/dev/null 2>&1
+    systemctl start solgram >>/dev/null 2>&1
+    systemctl enable solgram >>/dev/null 2>&1
 }
 
 start_installation() {
@@ -499,15 +499,15 @@ start_installation() {
 }
 
 cleanup() {
-    if [ ! -x "/var/lib/pagermaid" ]; then
+    if [ ! -x "/var/lib/solgram" ]; then
         echo "目录不存在不需要卸载。"
     else
         echo "正在关闭 Soluna-Gram . . ."
-        systemctl disable pagermaid >>/dev/null 2>&1
-        systemctl stop pagermaid >>/dev/null 2>&1
+        systemctl disable solgram >>/dev/null 2>&1
+        systemctl stop solgram >>/dev/null 2>&1
         echo "正在删除 Soluna-Gram 文件 . . ."
-        rm -rf /etc/systemd/system/pagermaid.service >>/dev/null 2>&1
-        rm -rf /var/lib/pagermaid >>/dev/null 2>&1
+        rm -rf /etc/systemd/system/solgram.service >>/dev/null 2>&1
+        rm -rf /var/lib/solgram >>/dev/null 2>&1
         echo "卸载完成 . . ."
     fi
 }
@@ -518,14 +518,14 @@ reinstall() {
 }
 
 cleansession() {
-    if [ ! -x "/var/lib/pagermaid" ]; then
+    if [ ! -x "/var/lib/solgram" ]; then
         echo "目录不存在请重新安装 Soluna-Gram。"
         exit 1
     fi
     echo "正在关闭 Soluna-Gram . . ."
-    systemctl stop pagermaid >>/dev/null 2>&1
+    systemctl stop solgram >>/dev/null 2>&1
     echo "正在删除账户授权文件 . . ."
-    rm -rf /var/lib/pagermaid/pagermaid.session >>/dev/null 2>&1
+    rm -rf /var/lib/solgram/solgram.session >>/dev/null 2>&1
     echo "请进行重新登陆. . ."
     if [ "$release" = "centos" ]; then
         yum_python_check
@@ -540,13 +540,13 @@ cleansession() {
         echo "目前暂时不支持此系统。"
     fi
     login_screen
-    systemctl start pagermaid >>/dev/null 2>&1
+    systemctl start solgram >>/dev/null 2>&1
 }
 
 stop_pager() {
     echo ""
     echo "正在关闭 Soluna-Gram . . ."
-    systemctl stop pagermaid >>/dev/null 2>&1
+    systemctl stop solgram >>/dev/null 2>&1
     echo ""
     sleep 3
     shon_online
@@ -555,7 +555,7 @@ stop_pager() {
 start_pager() {
     echo ""
     echo "正在启动 Soluna-Gram . . ."
-    systemctl start pagermaid >>/dev/null 2>&1
+    systemctl start solgram >>/dev/null 2>&1
     echo ""
     sleep 3
     shon_online
@@ -564,7 +564,7 @@ start_pager() {
 restart_pager() {
     echo ""
     echo "正在重新启动 Soluna-Gram . . ."
-    systemctl restart pagermaid >>/dev/null 2>&1
+    systemctl restart solgram >>/dev/null 2>&1
     echo ""
     sleep 3
     shon_online
@@ -625,7 +625,7 @@ shon_online() {
     echo "  8) 重新安装 Soluna-Gram 依赖"
     echo "  9) 退出脚本"
     echo ""
-    echo "     Version：1.0.1"
+    echo "     Version：0.1.1"
     echo ""
     echo -n "请输入编号: "
     read N

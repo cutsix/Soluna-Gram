@@ -1,8 +1,6 @@
 ---
 #Chinese (Simplified)
 #main
-web_TypeError: Oops - Web interface is configured to bind to an invalid address。
-web_KeyError: Oops - Web interface configuration is mising in the config file。
 PhoneNumberInvalidError: Oops ~ The phone number entered is invalid. Please make sure to append country code.
 module: モジュール管理
 error: loading error

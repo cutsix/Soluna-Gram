@@ -23,7 +23,7 @@ __version__ = 2
 
 def require_mod_version(version: int = __version__):
     if version > __version__:
-        raise ImportError("This plugin requires higher pagermaid-pyro version")
+        raise ImportError("This plugin requires higher solgram version")
 
     def decorator(function):
         return function
