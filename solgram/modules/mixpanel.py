@@ -7,13 +7,25 @@ import random
 from asyncio import sleep
 from typing import Union
 
-from pyrogram.raw.functions.channels import (
-    GetSponsoredMessages,
-    ViewSponsoredMessage,
-    ClickSponsoredMessage,
-)
 from pyrogram.raw.types import InputChannel
-from pyrogram.raw.types.messages import SponsoredMessages, SponsoredMessagesEmpty
+
+try:
+    from pyrogram.raw.functions.channels import (
+        GetSponsoredMessages,
+        ViewSponsoredMessage,
+        ClickSponsoredMessage,
+    )
+    from pyrogram.raw.types.messages import SponsoredMessages, SponsoredMessagesEmpty
+
+    SPONSORED_API_AVAILABLE = True
+except ImportError:
+    # Kurigram 2.2.19 does not expose sponsored-message raw methods.
+    GetSponsoredMessages = None
+    ViewSponsoredMessage = None
+    ClickSponsoredMessage = None
+    SponsoredMessages = None
+    SponsoredMessagesEmpty = None
+    SPONSORED_API_AVAILABLE = False
 
 from solgram import logs
 from solgram.config import Config
@@ -110,6 +122,17 @@ class Mixpanel:
 
 
 mp = Mixpanel(Config.MIXPANEL_API)
+_sponsored_api_warned = False
+
+
+def _sponsored_supported() -> bool:
+    global _sponsored_api_warned
+    if SPONSORED_API_AVAILABLE:
+        return True
+    if not _sponsored_api_warned:
+        logs.info("Kurigram 当前版本不支持赞助消息 raw API，已跳过 sponsored analytics。")
+        _sponsored_api_warned = True
+    return False
 
 
 async def set_people(bot: Client, force_update: bool = False):
@@ -159,6 +182,8 @@ async def mixpanel_report(bot: Client, message: Message, command, sub_command):
 async def get_sponsored(
     bot: Client, channel: "InputChannel"
 ) -> Union["SponsoredMessages", "SponsoredMessagesEmpty"]:
+    if not _sponsored_supported():
+        return None
     result = await bot.invoke(GetSponsoredMessages(channel=channel))
     logs.debug(f"Get sponsored messages: {type(result)}")
     return result
@@ -167,6 +192,8 @@ async def get_sponsored(
 async def read_sponsored(
     bot: Client, channel: "InputChannel", random_id: bytes
 ) -> bool:
+    if not _sponsored_supported():
+        return False
     result = await bot.invoke(
         ViewSponsoredMessage(channel=channel, random_id=random_id)
     )
@@ -185,6 +212,8 @@ async def read_sponsored(
 async def click_sponsored(
     bot: Client, channel: "InputChannel", random_id: bytes
 ) -> bool:
+    if not _sponsored_supported():
+        return False
     result = await bot.invoke(
         ClickSponsoredMessage(channel=channel, random_id=random_id)
     )
@@ -201,9 +230,11 @@ async def click_sponsored(
 
 
 async def log_sponsored_clicked_one(username: str):
+    if not _sponsored_supported():
+        return
     channel = await userbot.resolve_peer(username)
     sponsored = await get_sponsored(userbot, channel)
-    if isinstance(sponsored, SponsoredMessagesEmpty):
+    if sponsored is None or isinstance(sponsored, SponsoredMessagesEmpty):
         return
     for message in sponsored.messages:
         await sleep(random.randint(1, 5))
@@ -218,6 +249,8 @@ async def log_sponsored_clicked_one(username: str):
 async def log_sponsored_clicked():
     add_log_sponsored_clicked_task()
     if not Config.ALLOW_ANALYTIC:
+        return
+    if not _sponsored_supported():
         return
     await set_people(userbot)
     if not userbot.me:
