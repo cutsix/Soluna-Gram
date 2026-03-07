@@ -5,6 +5,7 @@ from os import remove, path, sep
 from os.path import exists
 from re import search, I
 from shutil import copyfile, move
+from typing import List
 
 from solgram import log, working_dir
 from solgram.common.plugin import plugin_remote_manager, plugin_manager
@@ -27,6 +28,55 @@ def move_plugin(file_path):
     plugin_directory = f"{working_dir}{sep}plugins{sep}"
     remove_plugin(name)
     move(file_path, plugin_directory)
+
+
+def build_install_summary(success_list: List[str], failed_list: List[str], no_need_list: List[str]) -> str:
+    text = f"<b>{lang('apt_name')}</b>\n\n"
+    if len(success_list) > 0:
+        text += lang("apt_install_success") + " : %s\n" % ", ".join(success_list)
+    if len(failed_list) > 0:
+        text += lang("apt_not_found") + " %s\n" % ", ".join(failed_list)
+    if len(no_need_list) > 0:
+        text += lang("apt_no_update") + " %s\n" % ", ".join(no_need_list)
+    return text
+
+
+async def install_remote_plugins(message: Message, plugin_names: List[str]) -> bool:
+    await plugin_manager.load_remote_plugins()
+    plugin_manager.load_local_plugins()
+    message = await message.edit(lang("apt_processing"))
+    success_list = []
+    failed_list = []
+    no_need_list = []
+    for name in plugin_names:
+        if plugin_manager.get_remote_plugin(name):
+            local_temp = plugin_manager.get_local_plugin(name)
+            if local_temp and not plugin_manager.plugin_need_update(name):
+                no_need_list.append(name)
+            else:
+                try:
+                    if await plugin_manager.install_remote_plugin(name):
+                        success_list.append(name)
+                    else:
+                        failed_list.append(name)
+                except Exception:
+                    failed_list.append(name)
+        else:
+            failed_list.append(name)
+    text = build_install_summary(success_list, failed_list, no_need_list)
+    await log(text)
+    await message.edit(text)
+    return len(success_list) > 0
+
+
+def format_remote_plugins_list() -> str:
+    return (
+        f"**{lang('apt_repo_list')}**\n\n"
+        + "\n\n".join(
+            f"`{plugin.name}` / `{plugin.version}`\n  {plugin.des_short}"
+            for plugin in plugin_manager.remote_plugins
+        )
+    )
 
 
 @listener(
@@ -61,44 +111,31 @@ async def plugin(message: Message):
             await log(f"{lang('apt_install_success')} {plugin_name}.")
             await reload_all()
         elif len(message.parameter) >= 2:
-            await plugin_manager.load_remote_plugins()
-            process_list = message.parameter
-            message = await message.edit(lang("apt_processing"))
-            del process_list[0]
-            success_list = []
-            failed_list = []
-            no_need_list = []
-            for i in process_list:
-                if plugin_manager.get_remote_plugin(i):
-                    local_temp = plugin_manager.get_local_plugin(i)
-                    if local_temp and not plugin_manager.plugin_need_update(i):
-                        no_need_list.append(i)
-                    else:
-                        try:
-                            if await plugin_manager.install_remote_plugin(i):
-                                success_list.append(i)
-                            else:
-                                failed_list.append(i)
-                        except Exception:
-                            failed_list.append(i)
-                else:
-                    failed_list.append(i)
-            text = f"<b>{lang('apt_name')}</b>\n\n"
-            if len(success_list) > 0:
-                text += lang("apt_install_success") + " : %s\n" % ", ".join(
-                    success_list
-                )
-            if len(failed_list) > 0:
-                text += lang("apt_not_found") + " %s\n" % ", ".join(failed_list)
-            if len(no_need_list) > 0:
-                text += lang("apt_no_update") + " %s\n" % ", ".join(no_need_list)
-            await log(text)
-            restart = len(success_list) > 0
-            await message.edit(text)
-            if restart:
+            if await install_remote_plugins(message, message.parameter[1:]):
                 await reload_all()
         else:
             await message.edit(lang("arg_error"))
+    elif message.parameter[0] == "installs":
+        if len(message.parameter) != 1:
+            await message.edit(lang("arg_error"))
+            return
+        await plugin_manager.load_remote_plugins()
+        if len(plugin_manager.remote_plugins) == 0:
+            await message.edit(lang("apt_repo_empty"))
+            return
+        if await install_remote_plugins(
+            message, [plugin.name for plugin in plugin_manager.remote_plugins]
+        ):
+            await reload_all()
+    elif message.parameter[0] == "list":
+        if len(message.parameter) != 1:
+            await message.edit(lang("arg_error"))
+            return
+        await plugin_manager.load_remote_plugins()
+        if len(plugin_manager.remote_plugins) == 0:
+            await message.edit(lang("apt_repo_empty"))
+            return
+        await message.edit(format_remote_plugins_list())
     elif message.parameter[0] == "remove":
         if len(message.parameter) == 2:
             if plugin_manager.remove_plugin(message.parameter[1]):

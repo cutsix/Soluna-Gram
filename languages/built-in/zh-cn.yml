@@ -301,7 +301,7 @@ hitokoto_type_meme: 抖机灵
 #plugin
 ## apt
 apt_des: 用于管理安装到 Soluna-Gram 的插件。
-apt_parameters: "{update|search|show|status|install|remove|enable|disable|upload|export} <插件名称/文件>"
+apt_parameters: "{update|search|show|list|installs|status|install|remove|enable|disable|upload|export} <插件名称/文件>"
 apt_name: "Soluna-Gram 插件管理器"
 apt_processing: 安装插件中 . . .
 apt_no_py: 出错了呜呜呜 ~ 无法从附件获取插件文件。
@@ -342,6 +342,8 @@ apt_plugin_maintainer: 作者
 apt_plugin_size: 大小
 apt_plugin_support: 支持周期
 apt_plugin_des_short: 说明
+apt_repo_list: 仓库组件列表
+apt_repo_empty: 当前插件仓库没有可用组件
 apt_source_des: "添加/删除/查看 自定义插件源"
 apt_source_parameters: "[add/del] [自定义软件源链接]"
 apt_source_not_found: 当前没有自定义插件源
