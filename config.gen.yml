@@ -49,7 +49,7 @@ mtp_port: ""
 mtp_secret: ""
 
 # Apt Git source
-git_source: ""
+git_source: "https://raw.githubusercontent.com/cutsix/Soluna-Gram-Plugins/main/"
 git_ssh: ""
 
 # Update Notice
