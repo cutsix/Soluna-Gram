@@ -456,6 +456,20 @@ sudo_group_del_per: 从此权限组中移除此权限成功
 sudo_user_add_per: 从此用户中添加此权限成功
 sudo_user_del_per: 从此用户中移除此权限成功
 sudo_list: 'Sudo 管理员列表：'
+sudo_del_success: "已彻底移除 {user} 及其所有权限"
+#grant
+grant_des: "插件授权管理"
+grant_granted: "已授予 {user} 以下插件权限：{plugins}"
+grant_revoked: "已撤销 {user} 以下插件权限：{plugins}"
+grant_reset: "已重置 {user} 的所有插件权限"
+grant_list_title: "当前插件授权总览："
+grant_list_user: "{user} 的插件授权："
+grant_no_plugins: "（无插件权限）"
+grant_not_sudo: "{user} 不在 sudo 列表中，请先使用 ,sudo add"
+grant_user_only: "grant 仅支持用户，不支持频道或匿名身份"
+grant_usage: "用法：,grant [target] <插件名...> | ,grant revoke [target] <插件名...> | ,grant list [target] | ,grant reset [target]"
+grant_plugin_warn: "警告：插件 {name} 未注册，已授权但可能无效"
+permission_denied: "权限不足，尚未被授权使用此命令"
 #sticker
 ## sticker
 sticker_des: 收集回复的图像/贴纸作为贴纸，通过参数指定 emoji 以设置非默认的 emoji。

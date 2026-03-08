@@ -456,6 +456,20 @@ sudo_group_del_per: Successfully removed this permission from this permission gr
 sudo_user_add_per: This permission was added to this user.
 sudo_user_del_per: Successfully removed this permission from this user.
 sudo_list: 'Sudo Administrator List:'
+sudo_del_success: "Permanently removed {user} and all related permissions."
+#grant
+grant_des: "Simplified plugin permission management."
+grant_granted: "Granted {user} the following plugin permissions: {plugins}"
+grant_revoked: "Revoked the following plugin permissions from {user}: {plugins}"
+grant_reset: "Reset all plugin permissions for {user}"
+grant_list_title: "Current plugin grant overview:"
+grant_list_user: "{user} plugin grants:"
+grant_no_plugins: "(no plugin permissions)"
+grant_not_sudo: "{user} is not in the sudo list. Please use ,sudo add first."
+grant_user_only: "grant only supports users, not channels or anonymous identities"
+grant_usage: "Usage: ,grant [target] <plugins...> | ,grant revoke [target] <plugins...> | ,grant list [target] | ,grant reset [target]"
+grant_plugin_warn: "Warning: plugin {name} is not registered; permission was added but may be ineffective."
+permission_denied: "Permission denied. You are not authorized to use this command."
 #sticker
 ## sticker
 sticker_des: Collect the replied images/stickers as stickers, and specify emoji through parameters to set a non-default emoji.

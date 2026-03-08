@@ -27,7 +27,7 @@ def from_msg_get_sudo_id(message: Message) -> int:
     is_plugin=False,
     command="sudo",
     need_admin=True,
-    parameters="{on|off|add|remove|gaddp|gaddu|gdelp|gdelu|glist|uaddp|udelp|list}",
+    parameters="{on|off|add|remove|del|gaddp|gaddu|gdelp|gdelu|glist|uaddp|udelp|list}",
     description=lang("sudo_des"),
 )
 async def sudo_change(message: Message):
@@ -115,6 +115,44 @@ async def sudo_remove(message: Message):
         await message.edit(f"__{lang('sudo_remove')}__")
     else:
         await message.edit(f"__{lang('sudo_remove_chat')}__")
+
+
+def format_sudo_target(message: Message, from_id: int) -> str:
+    if reply := message.reply_to_message:
+        if reply.from_user:
+            return reply.from_user.mention()
+        if reply.sender_chat:
+            return reply.sender_chat.title
+    return f"`{from_id}`"
+
+
+@sudo_change.sub_command(
+    is_plugin=False,
+    command="del",
+    need_admin=True,
+)
+async def sudo_del(message: Message):
+    sudo = get_sudo_list()
+    from_id = from_msg_get_sudo_id(message)
+    uid_str = str(from_id)
+    roles_snapshot = list(permissions.get_roles_for_user(uid_str))
+    perms_snapshot = list(permissions.get_permissions_for_user(uid_str))
+    if from_id not in sudo and not roles_snapshot and not perms_snapshot:
+        return await edit_delete(message, f"__{lang('sudo_no')}__")
+
+    if from_id in sudo:
+        sudo.remove(from_id)
+        sqlite["sudo_list"] = sudo
+
+    for role in roles_snapshot:
+        remove_user_from_group(uid_str, role)
+    for perm in perms_snapshot:
+        permission_name = perm[1] if perm[2] == "access" else f"-{perm[1]}"
+        remove_permission_for_user(uid_str, Permission(permission_name))
+
+    await message.edit(
+        lang("sudo_del_success").format(user=format_sudo_target(message, from_id))
+    )
 
 
 @sudo_change.sub_command(
