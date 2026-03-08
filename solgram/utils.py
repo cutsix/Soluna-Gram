@@ -173,6 +173,22 @@ def sudo_filter(permission: str):
     return filters.create(if_sudo, permission=permission)
 
 
+def sudo_user_filter():
+    async def if_sudo(_, __, message: Message):
+        if not _status_sudo():
+            return False
+        try:
+            from_id = (
+                message.from_user.id if message.from_user else message.sender_chat.id
+            )
+            sudo_list = get_sudo_list()
+            return from_id in sudo_list or message.chat.id in sudo_list
+        except Exception:  # noqa
+            return False
+
+    return filters.create(if_sudo)
+
+
 def from_self(message: Message) -> bool:
     if message.outgoing:
         return True

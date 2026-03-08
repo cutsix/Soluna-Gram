@@ -301,7 +301,7 @@ hitokoto_type_meme: 迷因
 #plugin
 ## apt
 apt_des: 用於管理插件。
-apt_parameters: "{update|search|show|status|install|remove|enable|disable|upload|export} <插件名稱/文件>"
+apt_parameters: "{update|search|show|list|installs|status|install|remove|enable|disable|upload|export} <插件名稱/文件>"
 apt_name: "Soluna-Gram 插件管理器"
 apt_processing: 安裝插件中…
 apt_no_py: Error！無法獲取插件文件。
@@ -342,6 +342,8 @@ apt_plugin_maintainer: 作者
 apt_plugin_size: 容量
 apt_plugin_support: 支援週期
 apt_plugin_des_short: 說明
+apt_repo_list: 倉庫組件列表
+apt_repo_empty: 當前插件倉庫沒有可用組件
 apt_source_des: "新增/刪除/檢視 自訂插件來源"
 apt_source_parameters: "[add/del] [自訂軟體來源連結]"
 apt_source_not_found: 目前沒有自訂插件來源
@@ -454,6 +456,20 @@ sudo_group_del_per: 從此權限組中移除此權限成功
 sudo_user_add_per: 從此用戶中添加此權限成功
 sudo_user_del_per: 從此用戶中移除此權限成功
 sudo_list: 'Sudo 管理員列表：'
+sudo_del_success: "已徹底移除 {user} 及其所有權限"
+#grant
+grant_des: "插件授權管理"
+grant_granted: "已授予 {user} 以下插件權限：{plugins}"
+grant_revoked: "已撤銷 {user} 以下插件權限：{plugins}"
+grant_reset: "已重置 {user} 的所有插件權限"
+grant_list_title: "當前插件授權總覽："
+grant_list_user: "{user} 的插件授權："
+grant_no_plugins: "（無插件權限）"
+grant_not_sudo: "{user} 不在 sudo 列表中，請先使用 ,sudo add"
+grant_user_only: "grant 僅支援使用者，不支援頻道或匿名身份"
+grant_usage: "用法：,grant [target] <插件名...> | ,grant revoke [target] <插件名...> | ,grant list [target] | ,grant reset [target]"
+grant_plugin_warn: "警告：插件 {name} 未註冊，已授權但可能無效"
+permission_denied: "權限不足，尚未被授權使用此命令"
 #sticker
 ## sticker
 sticker_des: 收集圖片作為貼圖並指定Emoji

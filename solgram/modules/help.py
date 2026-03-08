@@ -12,6 +12,84 @@ from solgram.common.reload import reload_all
 from solgram.utils import lang, Message, from_self, from_msg_get_sudo_uid
 from solgram.listener import listener
 
+SUPPORT_COMMANDS = {
+    "username",
+    "name",
+    "pfp",
+    "bio",
+    "rmpfp",
+    "profile",
+    "block",
+    "unblock",
+    "ghost",
+    "deny",
+    "convert",
+    "caption",
+    "ocr",
+    "highlight",
+    "time",
+    "translate",
+    "tts",
+    "google",
+    "animate",
+    "teletype",
+    "widen",
+    "owo",
+    "flip",
+    "rng",
+    "aaa",
+    "tuxsay",
+    "coin",
+    "help",
+    "lang",
+    "alias",
+    "id",
+    "uslog",
+    "log",
+    "re",
+    "leave",
+    "hitokoto",
+    "apt",
+    "prune",
+    "selfprune",
+    "yourprune",
+    "del",
+    "genqr",
+    "parseqr",
+    "sb",
+    "sysinfo",
+    "status",
+    "stats",
+    "speedtest",
+    "connection",
+    "pingdc",
+    "ping",
+    "topcloud",
+    "s",
+    "sticker",
+    "sh",
+    "restart",
+    "trace",
+    "chat",
+    "update",
+}
+
+
+def can_access_command(message: Message, command: str) -> bool:
+    return from_self(message) or enforce_permission(
+        from_msg_get_sudo_uid(message), help_messages[command]["permission"]
+    )
+
+
+def build_help_command_list(message: Message, include_support: bool) -> str:
+    result = []
+    for command in sorted(help_messages, reverse=False):
+        if not include_support and command in SUPPORT_COMMANDS:
+            continue
+        if can_access_command(message, command):
+            result.append(f"`{command}`")
+    return ", ".join(result)
+
 
 @listener(
     is_plugin=False,
@@ -34,83 +112,16 @@ async def help_command(message: Message):
             await message.edit(lang("arg_error"))
     else:
         result = f"**{lang('help_list')}: \n**"
-        support_commands = [
-            "username",
-            "name",
-            "pfp",
-            "bio",
-            "rmpfp",
-            "profile",
-            "block",
-            "unblock",
-            "ghost",
-            "deny",
-            "convert",
-            "caption",
-            "ocr",
-            "highlight",
-            "time",
-            "translate",
-            "tts",
-            "google",
-            "animate",
-            "teletype",
-            "widen",
-            "owo",
-            "flip",
-            "rng",
-            "aaa",
-            "tuxsay",
-            "coin",
-            "help",
-            "lang",
-            "alias",
-            "id",
-            "uslog",
-            "log",
-            "re",
-            "leave",
-            "hitokoto",
-            "apt",
-            "prune",
-            "selfprune",
-            "yourprune",
-            "del",
-            "genqr",
-            "parseqr",
-            "sb",
-            "sysinfo",
-            "status",
-            "stats",
-            "speedtest",
-            "connection",
-            "pingdc",
-            "ping",
-            "topcloud",
-            "s",
-            "sticker",
-            "sh",
-            "restart",
-            "trace",
-            "chat",
-            "update",
-        ]
-        for command in sorted(help_messages, reverse=False):
-            if str(command) in support_commands:
-                continue
-            if from_self(message) or enforce_permission(
-                from_msg_get_sudo_uid(message), help_messages[command]["permission"]
-            ):
-                result += f"`{command}`, "
-        if result == f"**{lang('help_list')}: \n**":
-            """The help raw command,"""
-            for command in sorted(help_messages, reverse=False):
-                if from_self(message) or enforce_permission(
-                    from_msg_get_sudo_uid(message), help_messages[command]["permission"]
-                ):
-                    result += f"`{command}`, "
+        commands_text = (
+            build_help_command_list(message, include_support=False)
+            if from_self(message)
+            else build_help_command_list(message, include_support=True)
+        )
+        if not commands_text and from_self(message):
+            commands_text = build_help_command_list(message, include_support=True)
+        result += commands_text
         await message.edit(
-            result[:-2]
+            result
             + f"\n**{lang('help_send')} \",help <{lang('command')}>\" {lang('help_see')}**",
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=True,
@@ -138,13 +149,10 @@ async def help_raw_command(message: Message):
             await message.edit(lang("arg_error"))
     else:
         result = f"**{lang('help_list')}: \n**"
-        for command in sorted(help_messages, reverse=False):
-            if from_self(message) or enforce_permission(
-                from_msg_get_sudo_uid(message), help_messages[command]["permission"]
-            ):
-                result += f"`{command}`, "
+        commands_text = build_help_command_list(message, include_support=True)
+        result += commands_text
         await message.edit(
-            f"""{result[:-2]}\n**{lang('help_send')} ",help <{lang('command')}>" {lang('help_see')}**""",
+            f"""{result}\n**{lang('help_send')} ",help <{lang('command')}>" {lang('help_see')}**""",
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=True,
         )

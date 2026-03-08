@@ -18,7 +18,7 @@ from pyrogram.handlers import MessageHandler, EditedMessageHandler
 from solgram import help_messages, logs, Config, bot, read_context, all_permissions
 from solgram.common.ignore import ignore_groups_manager
 from solgram.enums.command import CommandHandler, CommandHandlerDecorator
-from solgram.group_manager import Permission
+from solgram.group_manager import Permission, enforce_permission
 from solgram.single_utils import (
     Message,
     AlreadyInConversationError,
@@ -28,9 +28,10 @@ from solgram.single_utils import (
 from solgram.utils import (
     lang,
     attach_report,
-    sudo_filter,
+    sudo_user_filter,
     alias_command,
     get_permission_name,
+    from_msg_get_sudo_uid,
     process_exit,
     format_exc as format_exc_text,
 )
@@ -98,7 +99,7 @@ def listener(**args) -> CommandHandlerDecorator:
     else:
         base_filters = filters.all
     permission_name = get_permission_name(is_plugin, need_admin, command)
-    sudo_filters = sudo_filter(permission_name) & ~filters.via_bot & ~filters.me
+    sudo_filters = sudo_user_filter() & ~filters.via_bot & ~filters.me
     if ignore_forwarded:
         base_filters &= ~filters.forwarded
         sudo_filters &= ~filters.forwarded
@@ -263,8 +264,16 @@ def listener(**args) -> CommandHandlerDecorator:
             first=parent_command and not allow_parent,
         )
         if command:
+            async def sudo_handler(client: Client, message: Message):
+                if enforce_permission(from_msg_get_sudo_uid(message), permission_name):
+                    await handler(client, message)
+                    return
+                with contextlib.suppress(BaseException):
+                    await message.reply(lang("permission_denied"))
+                message.stop_propagation()
+
             bot.dispatcher.add_handler(
-                MessageHandler(handler, filters=sudo_filters),
+                MessageHandler(sudo_handler, filters=sudo_filters),
                 group=50 + priority,
                 first=parent_command and not allow_parent,
             )
@@ -276,7 +285,7 @@ def listener(**args) -> CommandHandlerDecorator:
             )
             if command:
                 bot.dispatcher.add_handler(
-                    EditedMessageHandler(handler, filters=sudo_filters),
+                    EditedMessageHandler(sudo_handler, filters=sudo_filters),
                     group=51 + priority,
                     first=parent_command and not allow_parent,
                 )

@@ -9,7 +9,6 @@ p, builder, modules.log, access, allow
 p, builder, modules.sysinfo, access, allow
 p, builder, modules.status, access, allow
 p, builder, modules.re, access, allow
-p, default, plugins, access, allow
 p, default, modules.help, access, allow
 p, default, modules.help_raw, access, allow
 p, default, modules.ping, access, allow
