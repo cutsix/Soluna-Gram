@@ -2,7 +2,7 @@ import contextlib
 import subprocess
 from importlib.util import find_spec
 from os.path import exists
-from typing import Optional
+from typing import Iterable, Optional, Tuple
 
 import httpx
 from os import remove
@@ -14,7 +14,7 @@ from pyrogram import filters
 from pyrogram.errors import RPCError
 
 from solgram.config import Config
-from solgram import bot
+from solgram import all_permissions, bot
 from solgram.group_manager import enforce_permission
 from solgram.single_utils import _status_sudo, get_sudo_list, Message, sqlite
 
@@ -27,6 +27,79 @@ def lang(text: str) -> str:
 def alias_command(command: str, disallow_alias: bool = False) -> str:
     """alias"""
     return command if disallow_alias else Config.alias_dict.get(command, command)
+
+
+def normalize_command_name(command: str) -> str:
+    """Normalize a permission-like input into a bare command name."""
+    command = command.strip()
+    if command.startswith("plugins_root."):
+        return command.split(".", 1)[1]
+    if command.startswith("plugins."):
+        return command.split(".", 1)[1]
+    return command
+
+
+def check_command_scope(command: str) -> Optional[str]:
+    """Return the plugin permission namespace for a registered top-level command."""
+    command_name = normalize_command_name(command)
+    if not command_name:
+        return None
+    plugin_permission = f"plugins.{command_name}"
+    plugin_root_permission = f"plugins_root.{command_name}"
+    for permission in all_permissions:
+        if permission.name == plugin_permission:
+            return "plugins"
+        if permission.name == plugin_root_permission:
+            return "plugins_root"
+    return None
+
+
+async def get_target_label(client, user_id: int) -> str:
+    try:
+        user = await client.get_users(user_id)
+    except Exception:
+        return str(user_id)
+    if user.username:
+        return f"@{user.username}"
+    full_name = " ".join(
+        value for value in [user.first_name, user.last_name] if value
+    ).strip()
+    return full_name or str(user_id)
+
+
+async def resolve_target(
+    client,
+    message: Message,
+    subcommand: Optional[str] = None,
+    subcommands: Optional[Iterable[str]] = None,
+    usage_key: str = "grant_usage",
+) -> Tuple[Optional[int], bool, bool]:
+    """Resolve a target user from reply, tg_id, or @username."""
+    if message.reply_to_message:
+        user = message.reply_to_message.from_user
+        if not user:
+            await message.edit(lang("grant_user_only"))
+            return None, False, False
+        return user.id, False, True
+
+    args = message.parameter or []
+    target_index = 1 if subcommand and subcommands and subcommand in subcommands else 0
+    if target_index >= len(args):
+        return None, False, True
+
+    candidate = args[target_index]
+    if candidate.isdigit():
+        return int(candidate), True, True
+    if candidate.startswith("@"):
+        try:
+            user = await client.get_users(candidate)
+        except Exception:
+            await message.edit(lang(usage_key))
+            return None, True, False
+        return user.id, True, True
+
+    await message.edit(lang(usage_key))
+    return None, True, False
 
 
 async def attach_report(plaintext, file_name, reply_id=None, caption=None):
