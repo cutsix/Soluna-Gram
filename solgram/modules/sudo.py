@@ -12,8 +12,17 @@ from solgram.group_manager import (
     permissions,
 )
 from solgram.enums import Client, Message
-from solgram.utils import lang, edit_delete, _status_sudo
+from solgram.utils import (
+    _status_sudo,
+    check_command_scope,
+    edit_delete,
+    get_target_label,
+    lang,
+    resolve_target,
+)
 from solgram.single_utils import get_sudo_list
+
+SUDO_GRANT_SUBCOMMANDS = {"grant", "revoke"}
 
 
 def from_msg_get_sudo_id(message: Message) -> int:
@@ -27,7 +36,7 @@ def from_msg_get_sudo_id(message: Message) -> int:
     is_plugin=False,
     command="sudo",
     need_admin=True,
-    parameters="{on|off|add|remove|del|gaddp|gaddu|gdelp|gdelu|glist|uaddp|udelp|list}",
+    parameters="{on|off|add|remove|del|grant|revoke|gaddp|gaddu|gdelp|gdelu|glist|uaddp|udelp|list}",
     description=lang("sudo_des"),
 )
 async def sudo_change(message: Message):
@@ -126,6 +135,20 @@ def format_sudo_target(message: Message, from_id: int) -> str:
     return f"`{from_id}`"
 
 
+def extract_grant_commands(args, has_target: bool) -> list[str]:
+    offset = 2 if has_target else 1
+    commands = []
+    for name in args[offset:]:
+        command_name = name.strip()
+        if not command_name:
+            continue
+        if command_name.startswith(("plugins.", "plugins_root.")):
+            command_name = command_name.split(".", 1)[1]
+        if command_name not in commands:
+            commands.append(command_name)
+    return commands
+
+
 @sudo_change.sub_command(
     is_plugin=False,
     command="del",
@@ -153,6 +176,110 @@ async def sudo_del(message: Message):
     await message.edit(
         lang("sudo_del_success").format(user=format_sudo_target(message, from_id))
     )
+
+
+@sudo_change.sub_command(
+    is_plugin=False,
+    command="grant",
+    need_admin=True,
+)
+async def sudo_grant(client: Client, message: Message):
+    target_id, has_target_arg, target_valid = await resolve_target(
+        client, message, "grant", SUDO_GRANT_SUBCOMMANDS, "sudo_grant_usage"
+    )
+    if not target_valid:
+        return
+    if target_id is None:
+        await message.edit(lang("sudo_grant_usage"))
+        return
+
+    target_label = await get_target_label(client, target_id)
+    if target_id not in get_sudo_list():
+        await message.edit(lang("grant_not_sudo").format(user=target_label))
+        return
+
+    command_names = extract_grant_commands(message.parameter or [], has_target_arg)
+    if not command_names:
+        await message.edit(lang("sudo_grant_usage"))
+        return
+
+    warnings = []
+    applicable_commands = []
+    for command_name in command_names:
+        scope = check_command_scope(command_name)
+        if scope == "plugins_root":
+            applicable_commands.append(command_name)
+        elif scope == "plugins":
+            warnings.append(lang("sudo_grant_not_root").format(name=command_name))
+        else:
+            warnings.append(lang("sudo_grant_root_warn").format(name=command_name))
+            applicable_commands.append(command_name)
+
+    for command_name in applicable_commands:
+        add_permission_for_user(str(target_id), Permission(f"plugins_root.{command_name}"))
+
+    text = ""
+    if applicable_commands:
+        text = lang("sudo_grant_granted").format(
+            user=target_label, plugins=", ".join(applicable_commands)
+        )
+    if warnings:
+        warning_text = "\n".join(warnings)
+        text = f"{text}\n\n{warning_text}".strip()
+    await message.edit(text)
+
+
+@sudo_change.sub_command(
+    is_plugin=False,
+    command="revoke",
+    need_admin=True,
+)
+async def sudo_revoke(client: Client, message: Message):
+    target_id, has_target_arg, target_valid = await resolve_target(
+        client, message, "revoke", SUDO_GRANT_SUBCOMMANDS, "sudo_grant_usage"
+    )
+    if not target_valid:
+        return
+    if target_id is None:
+        await message.edit(lang("sudo_grant_usage"))
+        return
+
+    target_label = await get_target_label(client, target_id)
+    if target_id not in get_sudo_list():
+        await message.edit(lang("grant_not_sudo").format(user=target_label))
+        return
+
+    command_names = extract_grant_commands(message.parameter or [], has_target_arg)
+    if not command_names:
+        await message.edit(lang("sudo_grant_usage"))
+        return
+
+    warnings = []
+    applicable_commands = []
+    for command_name in command_names:
+        scope = check_command_scope(command_name)
+        if scope == "plugins_root":
+            applicable_commands.append(command_name)
+        elif scope == "plugins":
+            warnings.append(lang("sudo_grant_not_root").format(name=command_name))
+        else:
+            warnings.append(lang("sudo_grant_root_warn").format(name=command_name))
+            applicable_commands.append(command_name)
+
+    for command_name in applicable_commands:
+        remove_permission_for_user(
+            str(target_id), Permission(f"plugins_root.{command_name}")
+        )
+
+    text = ""
+    if applicable_commands:
+        text = lang("sudo_grant_revoked").format(
+            user=target_label, plugins=", ".join(applicable_commands)
+        )
+    if warnings:
+        warning_text = "\n".join(warnings)
+        text = f"{text}\n\n{warning_text}".strip()
+    await message.edit(text)
 
 
 @sudo_change.sub_command(

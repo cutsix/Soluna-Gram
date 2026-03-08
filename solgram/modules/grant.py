@@ -2,7 +2,6 @@
 
 from typing import List, Optional, Tuple
 
-from solgram import all_permissions
 from solgram.dependence import get_sudo_list
 from solgram.enums import Client, Message
 from solgram.group_manager import (
@@ -12,20 +11,20 @@ from solgram.group_manager import (
     remove_permission_for_user,
 )
 from solgram.listener import listener
-from solgram.utils import lang
+from solgram.utils import (
+    check_command_scope,
+    get_target_label,
+    lang,
+    resolve_target,
+)
 
-SUBCOMMANDS = {"revoke", "list", "reset"}
+GRANT_SUBCOMMANDS = {"revoke", "list", "reset"}
 
 
 def get_subcommand(args: List[str]) -> Optional[str]:
-    if args and args[0] in SUBCOMMANDS:
+    if args and args[0] in GRANT_SUBCOMMANDS:
         return args[0]
     return None
-
-
-def is_registered_plugin(plugin_name: str) -> bool:
-    permission_name = f"plugins.{plugin_name}"
-    return any(permission.name == permission_name for permission in all_permissions)
 
 
 def get_plugin_permissions(user_id: int) -> List[Tuple[str, str, str]]:
@@ -36,64 +35,22 @@ def get_plugin_permissions(user_id: int) -> List[Tuple[str, str, str]]:
     ]
 
 
-def extract_plugins(
+def extract_commands(
     args: List[str], has_target: bool, subcommand: Optional[str]
 ) -> List[str]:
     offset = 1 if subcommand else 0
     if has_target:
         offset += 1
-    plugins = []
+    commands = []
     for name in args[offset:]:
-        plugin_name = name.strip()
-        if not plugin_name:
+        command_name = name.strip()
+        if not command_name:
             continue
-        if plugin_name.startswith("plugins."):
-            plugin_name = plugin_name.split(".", 1)[1]
-        if plugin_name not in plugins:
-            plugins.append(plugin_name)
-    return plugins
-
-
-async def get_target_label(client: Client, user_id: int) -> str:
-    try:
-        user = await client.get_users(user_id)
-    except Exception:
-        return str(user_id)
-    if user.username:
-        return f"@{user.username}"
-    full_name = " ".join(
-        value for value in [user.first_name, user.last_name] if value
-    ).strip()
-    return full_name or str(user_id)
-
-
-async def resolve_target(
-    client: Client, message: Message, subcommand: Optional[str]
-) -> Tuple[Optional[int], bool, bool]:
-    if message.reply_to_message:
-        user = message.reply_to_message.from_user
-        if not user:
-            await message.edit(lang("grant_user_only"))
-            return None, False, False
-        return user.id, False, True
-
-    args = message.parameter or []
-    target_index = 1 if subcommand else 0
-    if target_index >= len(args):
-        return None, False, True
-
-    candidate = args[target_index]
-    if candidate.isdigit():
-        return int(candidate), True, True
-    if candidate.startswith("@"):
-        try:
-            user = await client.get_users(candidate)
-        except Exception:
-            await message.edit(lang("grant_usage"))
-            return None, True, False
-        return user.id, True, True
-    await message.edit(lang("grant_usage"))
-    return None, True, False
+        if command_name.startswith(("plugins.", "plugins_root.")):
+            command_name = command_name.split(".", 1)[1]
+        if command_name not in commands:
+            commands.append(command_name)
+    return commands
 
 
 async def render_grant_overview(client: Client) -> str:
@@ -133,7 +90,7 @@ async def render_user_permissions(client: Client, user_id: int) -> str:
     command="grant",
     need_admin=True,
     description=lang("grant_des"),
-    parameters="[revoke|list|reset] [target] [plugins...]",
+    parameters="[revoke|list|reset] [target] [commands...]",
 )
 async def grant_command(client: Client, message: Message):
     args = message.parameter or []
@@ -143,7 +100,7 @@ async def grant_command(client: Client, message: Message):
 
     subcommand = get_subcommand(args)
     target_id, has_target_arg, target_valid = await resolve_target(
-        client, message, subcommand
+        client, message, subcommand, GRANT_SUBCOMMANDS, "grant_usage"
     )
     if not target_valid:
         return
@@ -175,7 +132,7 @@ async def grant_command(client: Client, message: Message):
         return
 
     if subcommand == "reset":
-        if extract_plugins(args, has_target_arg, subcommand):
+        if extract_commands(args, has_target_arg, subcommand):
             await message.edit(lang("grant_usage"))
             return
         for perm in get_plugin_permissions(target_id):
@@ -183,31 +140,41 @@ async def grant_command(client: Client, message: Message):
         await message.edit(lang("grant_reset").format(user=target_label))
         return
 
-    plugin_names = extract_plugins(args, has_target_arg, subcommand)
-    if not plugin_names:
+    command_names = extract_commands(args, has_target_arg, subcommand)
+    if not command_names:
         await message.edit(lang("grant_usage"))
         return
 
-    warnings = [
-        lang("grant_plugin_warn").format(name=name)
-        for name in plugin_names
-        if not is_registered_plugin(name)
-    ]
-    for plugin_name in plugin_names:
-        permission = Permission(f"plugins.{plugin_name}")
+    warnings = []
+    applicable_commands = []
+    for command_name in command_names:
+        scope = check_command_scope(command_name)
+        if scope == "plugins":
+            applicable_commands.append(command_name)
+        elif scope == "plugins_root":
+            warnings.append(lang("grant_plugin_root_warn").format(name=command_name))
+        else:
+            warnings.append(lang("grant_cmd_not_found").format(name=command_name))
+            applicable_commands.append(command_name)
+
+    for command_name in applicable_commands:
+        permission = Permission(f"plugins.{command_name}")
         if subcommand == "revoke":
             remove_permission_for_user(str(target_id), permission)
         else:
             add_permission_for_user(str(target_id), permission)
 
-    if subcommand == "revoke":
+    if subcommand == "revoke" and applicable_commands:
         text = lang("grant_revoked").format(
-            user=target_label, plugins=", ".join(plugin_names)
+            user=target_label, plugins=", ".join(applicable_commands)
+        )
+    elif applicable_commands:
+        text = lang("grant_granted").format(
+            user=target_label, plugins=", ".join(applicable_commands)
         )
     else:
-        text = lang("grant_granted").format(
-            user=target_label, plugins=", ".join(plugin_names)
-        )
+        text = ""
     if warnings:
-        text += "\n\n" + "\n".join(warnings)
+        warning_text = "\n".join(warnings)
+        text = f"{text}\n\n{warning_text}".strip()
     await message.edit(text)
