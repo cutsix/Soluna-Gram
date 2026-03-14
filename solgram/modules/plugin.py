@@ -10,7 +10,11 @@ from shutil import copyfile, move
 from typing import Dict, List, Optional
 
 from solgram import log, logs, working_dir
-from solgram.common.plugin import plugin_remote_manager, plugin_manager
+from solgram.common.plugin import (
+    is_owner_vault_remote,
+    plugin_remote_manager,
+    plugin_manager,
+)
 from solgram.common.reload import reload_all
 from solgram.enums import Message
 from solgram.listener import listener
@@ -492,13 +496,22 @@ async def apt_source(message: Message):
     subcommand = args[0]
     if subcommand == "add":
         if len(args) >= 2 and args[1] == "private":
-            if len(args) != 5 or args[3] != "--token":
+            if len(args) == 3:
+                url = args[2]
+                if not url.endswith("/"):
+                    url += "/"
+                if not is_owner_vault_remote(url):
+                    await message.edit(lang("arg_error"))
+                    return
+                token = None
+            elif len(args) == 5 and args[3] == "--token":
+                url = args[2]
+                if not url.endswith("/"):
+                    url += "/"
+                token = args[4]
+            else:
                 await message.edit(lang("arg_error"))
                 return
-            url = args[2]
-            if not url.endswith("/"):
-                url += "/"
-            token = args[4]
             plugin_remote_manager.add_private_remote(url, token)
             await plugin_manager.load_remote_plugins(enable_cache=False)
             text = append_auth_error_messages(

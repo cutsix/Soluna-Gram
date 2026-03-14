@@ -345,7 +345,7 @@ apt_plugin_des_short: 說明
 apt_repo_list: 倉庫組件列表
 apt_repo_empty: 當前插件倉庫沒有可用組件
 apt_source_des: "新增/刪除/檢視 自訂插件來源"
-apt_source_parameters: "[add/del] [自訂軟體來源連結] | add private <url> --token <token>"
+apt_source_parameters: "[add/del] [自訂軟體來源連結] | add private <url> [--token <token>]"
 apt_source_not_found: 目前沒有自訂插件來源
 apt_source_header: "當前自訂插件來源:"
 apt_source_add_success: 添加成功
@@ -365,7 +365,7 @@ apt_uploadpriv_not_private: "⚠️ 此插件不是私有插件，請使用 ,apt
 apt_uploadpriv_default: "⚠️ 此為私有插件，請尊重插件作者的勞動成果，切勿任意分享。"
 vault_des: "管理私有插件倉庫授權"
 vault_parameters: "<auth|ban|remove|list|info> [參數]"
-vault_usage: "用法：,vault auth [target] [天數] | ,vault ban [target] | ,vault remove [target] | ,vault list | ,vault info"
+vault_usage: "用法：,vault auth [回覆/@使用者名稱/tg_id] [天數] | ,vault ban [回覆/@使用者名稱/tg_id] | ,vault remove [回覆/@使用者名稱/tg_id] | ,vault list | ,vault info"
 vault_owner_only: "此命令僅限 owner 使用"
 vault_config_missing: "Vault 設定缺失，請先設定 vault_url 和 vault_admin_key"
 vault_request_failed: "Vault 請求失敗：{error}"

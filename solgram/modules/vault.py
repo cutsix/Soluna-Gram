@@ -3,7 +3,7 @@
 import asyncio
 import contextlib
 from html import escape
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from pyrogram.enums import ParseMode
 
@@ -16,11 +16,7 @@ from solgram.utils import (
     from_self,
     get_target_label,
     lang,
-    resolve_target,
 )
-
-VAULT_TARGET_COMMANDS = {"auth", "ban", "remove"}
-
 
 def get_vault_urls() -> Optional[Dict[str, str]]:
     if not Config.VAULT_URL or not Config.VAULT_ADMIN_KEY:
@@ -95,6 +91,36 @@ def format_expire_text(value: Any) -> str:
     return str(value)
 
 
+async def resolve_vault_target(
+    client: Client, message: Message
+) -> Tuple[Optional[int], bool, bool]:
+    if message.reply_to_message:
+        user = message.reply_to_message.from_user
+        if not user:
+            await message.edit(lang("vault_usage"))
+            return None, False, False
+        return user.id, False, True
+
+    args = message.parameter or []
+    if len(args) < 2:
+        return None, False, True
+
+    candidate = args[1].strip()
+    if candidate.isdigit():
+        return int(candidate), True, True
+
+    if candidate.startswith("@"):
+        try:
+            user = await client.get_users(candidate)
+        except Exception:
+            await message.edit(lang("vault_usage"))
+            return None, True, False
+        return user.id, True, True
+
+    await message.edit(lang("vault_usage"))
+    return None, True, False
+
+
 @listener(
     is_plugin=False,
     outgoing=True,
@@ -121,8 +147,8 @@ async def vault_command(client: Client, message: Message):
 
     subcommand = args[0]
     if subcommand == "auth":
-        target_id, has_target_arg, target_valid = await resolve_target(
-            client, message, subcommand, VAULT_TARGET_COMMANDS, "vault_usage"
+        target_id, has_target_arg, target_valid = await resolve_vault_target(
+            client, message
         )
         if not target_valid:
             return
@@ -179,8 +205,8 @@ async def vault_command(client: Client, message: Message):
         return
 
     if subcommand in {"ban", "remove"}:
-        target_id, has_target_arg, target_valid = await resolve_target(
-            client, message, subcommand, VAULT_TARGET_COMMANDS, "vault_usage"
+        target_id, has_target_arg, target_valid = await resolve_vault_target(
+            client, message
         )
         if not target_valid:
             return
@@ -255,7 +281,7 @@ async def vault_command(client: Client, message: Message):
             f"{lang('vault_info_repo_name')}`{repo_name}`\n"
             f"{lang('vault_info_plugin_count')}`{plugin_count}`\n"
             f"{lang('vault_info_user_count')}`{user_count}`\n"
-            f"{lang('vault_info_contact')}`{contact}`\n"
+            f"{lang('vault_info_contact')} {contact}\n"
             f"{lang('vault_info_api_url')}`{urls['api_url']}`"
         )
         await message.edit(text)

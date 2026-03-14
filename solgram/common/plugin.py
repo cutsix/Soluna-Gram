@@ -16,6 +16,30 @@ from solgram.services import sqlite
 plugins_path = Path("plugins")
 
 
+def normalize_remote_url(url: str) -> str:
+    return url if url.endswith("/") else f"{url}/"
+
+
+def get_owner_vault_api_url() -> Optional[str]:
+    if not Config.VAULT_URL or not Config.VAULT_ADMIN_KEY:
+        return None
+    return f"{Config.VAULT_URL.rstrip('/')}/api/"
+
+
+def is_owner_vault_remote(url: str) -> bool:
+    owner_api_url = get_owner_vault_api_url()
+    return bool(owner_api_url and normalize_remote_url(url) == owner_api_url)
+
+
+def build_remote_headers(url: str, token: Optional[str] = None) -> Dict[str, str]:
+    headers = {}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    if is_owner_vault_remote(url) and Config.VAULT_ADMIN_KEY:
+        headers["X-Admin-Key"] = Config.VAULT_ADMIN_KEY
+    return headers
+
+
 class PrivateRepoAuthError(Exception):
     def __init__(self, error_detail: dict, status_code: Optional[int] = None):
         if not isinstance(error_detail, dict):
@@ -94,10 +118,10 @@ class RemotePlugin(LocalPlugin):
     auth_type: str = "public"
 
     async def install(self, token: Optional[str] = None) -> bool:
-        headers = {}
-        if token:
-            headers["Authorization"] = f"Bearer {token}"
-        html = await client.get(f"{self.remote_source}{self.name}/main.py", headers=headers)
+        headers = build_remote_headers(self.remote_source, token=token)
+        html = await client.get(
+            f"{self.remote_source}{self.name}/main.py", headers=headers
+        )
         if html.status_code in (401, 403):
             raise _build_auth_error(html)
         if html.status_code == 200:
@@ -141,7 +165,7 @@ class PluginRemoteManager:
             return True
         return False
 
-    def add_private_remote(self, remote_url: str, token: str) -> bool:
+    def add_private_remote(self, remote_url: str, token: Optional[str] = None) -> bool:
         remotes = self.get_remotes()
         existing = next(filter(lambda x: x.url == remote_url, remotes), None)
         if existing:
@@ -336,9 +360,7 @@ class PluginManager:
     @staticmethod
     async def fetch_remote_url(url: str, token: Optional[str] = None) -> List[Dict]:
         try:
-            headers = {}
-            if token:
-                headers["Authorization"] = f"Bearer {token}"
+            headers = build_remote_headers(url, token=token)
             data = await client.get(f"{url}list.json", headers=headers)
             if data.status_code in (401, 403):
                 raise _build_auth_error(data)

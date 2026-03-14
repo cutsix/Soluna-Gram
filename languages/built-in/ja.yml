@@ -345,7 +345,7 @@ apt_plugin_des_short: descriptionの
 apt_repo_list: repository plugin list
 apt_repo_empty: There are no available plugins in the current repository.
 apt_source_des: "カスタムプラグインソースの追加/削除/表示。"
-apt_source_parameters: "[add/del] [カスタムプラグインのソースリンク] | add private <url> --token <token>"
+apt_source_parameters: "[add/del] [カスタムプラグインのソースリンク] | add private <url> [--token <token>]"
 apt_source_not_found: 現在、カスタムプラグインソースはありません。
 apt_source_header: "現在のカスタムプラグインソース:"
 apt_source_add_success: 追加に成功しました。
@@ -365,7 +365,7 @@ apt_uploadpriv_not_private: "⚠️ このプラグインは非公開プラグ�
 apt_uploadpriv_default: "⚠️ これは非公開プラグインです。作者の成果を尊重し、無断で共有しないでください。"
 vault_des: "非公開プラグイン Vault を管理します。"
 vault_parameters: "<auth|ban|remove|list|info> [args]"
-vault_usage: "Usage: ,vault auth [target] [days] | ,vault ban [target] | ,vault remove [target] | ,vault list | ,vault info"
+vault_usage: "Usage: ,vault auth [reply/@username/tg_id] [days] | ,vault ban [reply/@username/tg_id] | ,vault remove [reply/@username/tg_id] | ,vault list | ,vault info"
 vault_owner_only: "このコマンドは owner のみ実行できます。"
 vault_config_missing: "Vault 設定が不足しています。 vault_url と vault_admin_key を設定してください。"
 vault_request_failed: "Vault request failed: {error}"

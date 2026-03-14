@@ -345,7 +345,7 @@ apt_plugin_des_short: description
 apt_repo_list: repository plugin list
 apt_repo_empty: There are no available plugins in the current repository.
 apt_source_des: "Add/Del/View Custom Plugin Sources."
-apt_source_parameters: "[add/del] [custom plugin source links] | add private <url> --token <token>"
+apt_source_parameters: "[add/del] [custom plugin source links] | add private <url> [--token <token>]"
 apt_source_not_found: There is currently no custom plugin source.
 apt_source_header: "Current custom plugin source:"
 apt_source_add_success: Add successful.
@@ -365,7 +365,7 @@ apt_uploadpriv_not_private: "⚠️ This plugin is not a private plugin. Use ,ap
 apt_uploadpriv_default: "⚠️ This is a private plugin. Please respect the author's work and do not share it without permission."
 vault_des: "Manage a private plugin vault."
 vault_parameters: "<auth|ban|remove|list|info> [args]"
-vault_usage: "Usage: ,vault auth [target] [days] | ,vault ban [target] | ,vault remove [target] | ,vault list | ,vault info"
+vault_usage: "Usage: ,vault auth [reply/@username/tg_id] [days] | ,vault ban [reply/@username/tg_id] | ,vault remove [reply/@username/tg_id] | ,vault list | ,vault info"
 vault_owner_only: "This command is owner-only."
 vault_config_missing: "Vault configuration is missing. Please set vault_url and vault_admin_key first."
 vault_request_failed: "Vault request failed: {error}"
