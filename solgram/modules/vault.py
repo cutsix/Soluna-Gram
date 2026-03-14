@@ -6,6 +6,13 @@ from html import escape
 from typing import Any, Dict, List, Optional, Tuple
 
 from pyrogram.enums import ParseMode
+from pyrogram.errors import (
+    ChatWriteForbidden,
+    PeerIdInvalid,
+    PrivacyPremiumRequired,
+    UserNotMutualContact,
+    UserPrivacyRestricted,
+)
 
 from solgram import logs
 from solgram.config import Config
@@ -89,6 +96,18 @@ def format_expire_text(value: Any) -> str:
     if value in (None, "", 0, "0"):
         return lang("vault_expire_forever")
     return str(value)
+
+
+async def get_vault_contact(urls: Dict[str, str]) -> str:
+    try:
+        data = await vault_request("GET", f"{urls['admin_url']}/info")
+    except Exception:
+        return urls["vault_url"]
+    if isinstance(data, dict):
+        contact = str(data.get("contact") or "").strip()
+        if contact:
+            return contact
+    return urls["vault_url"]
 
 
 async def resolve_vault_target(
@@ -192,6 +211,19 @@ async def vault_command(client: Client, message: Message):
             sent_message = await client.send_message(
                 target_id, text, parse_mode=ParseMode.HTML
             )
+        except (
+            ChatWriteForbidden,
+            PeerIdInvalid,
+            PrivacyPremiumRequired,
+            UserNotMutualContact,
+            UserPrivacyRestricted,
+        ) as exc:
+            logs.warning(f"vault auth 因私聊限制发送 Token 失败: {exc}")
+            contact = await get_vault_contact(urls)
+            await message.edit(
+                lang("vault_auth_contact_required").format(contact=contact)
+            )
+            return
         except Exception as exc:
             logs.warning(f"vault auth 发送 Token 失败: {exc}")
             await message.edit(lang("vault_auth_send_failed"))
