@@ -301,7 +301,7 @@ hitokoto_type_meme: 抖机灵
 #plugin
 ## apt
 apt_des: 用于管理安装到 Soluna-Gram 的插件。
-apt_parameters: "{update|search|show|list|installs|status|install|remove|enable|disable|upload|export} <插件名称/文件>"
+apt_parameters: "{update|search|show|list|installs|status|install|remove|enable|disable|upload|uploadpriv|export} <插件名称/文件>"
 apt_name: "Soluna-Gram 插件管理器"
 apt_processing: 安装插件中 . . .
 apt_no_py: 出错了呜呜呜 ~ 无法从附件获取插件文件。
@@ -345,14 +345,54 @@ apt_plugin_des_short: 说明
 apt_repo_list: 仓库组件列表
 apt_repo_empty: 当前插件仓库没有可用组件
 apt_source_des: "添加/删除/查看 自定义插件源"
-apt_source_parameters: "[add/del] [自定义软件源链接]"
+apt_source_parameters: "[add/del] [自定义软件源链接] | add private <url> --token <token>"
 apt_source_not_found: 当前没有自定义插件源
 apt_source_header: "当前自定义插件源:"
 apt_source_add_success: 添加成功
+apt_source_add_private_success: 私有源已保存
 apt_source_del_success: 删除成功
 apt_source_add_failed: 添加失败，此源已存在
 apt_source_add_invalid: 添加失败，此源无效
 apt_source_del_failed: 删除失败，此源不存在
+apt_private_repo_errors: "私有源提示："
+apt_private_repo_unknown: "私有仓库"
+apt_private_repo_contact: "仓库管理员"
+apt_private_repo_token_expired: "⚠️ 你在 {repo_name} 的访问凭证已过期，请联系 {contact} 重新授权"
+apt_private_repo_forbidden: "⚠️ 你已被 {repo_name} 的管理员禁止访问"
+apt_private_repo_invalid_token: "⚠️ 你在 {repo_name} 的访问凭证无效，请联系仓库管理员获取授权"
+apt_private_repo_auth_error: "⚠️ 访问 {repo_name} 时鉴权失败"
+apt_uploadpriv_not_private: "⚠️ 该插件不是私有插件，请使用 ,apt upload 命令"
+apt_uploadpriv_default: "⚠️ 此为私有插件，请尊重插件作者的劳动成果，切勿随意分享。"
+vault_des: "管理私有插件仓库授权"
+vault_parameters: "<auth|ban|remove|list|info> [参数]"
+vault_usage: "用法：,vault auth [target] [天数] | ,vault ban [target] | ,vault remove [target] | ,vault list | ,vault info"
+vault_owner_only: "该命令仅限 owner 使用"
+vault_config_missing: "Vault 配置缺失，请先设置 vault_url 和 vault_admin_key"
+vault_request_failed: "Vault 请求失败：{error}"
+vault_response_invalid: "Vault 返回内容缺少 token 字段"
+vault_token_title: "私有仓库授权凭证"
+vault_repo_label: "仓库："
+vault_token_label: "Token："
+vault_expire_label: "有效期："
+vault_command_label: "请执行以下命令完成配置："
+vault_auto_delete_notice: "⚠️ 此消息将在 2 分钟后自动删除"
+vault_expire_forever: "永久有效"
+vault_expire_days: "{days} 天"
+vault_auth_send_failed: "⚠️ 凭证发送失败，请确认对方账号状态正常后重试"
+vault_auth_success: "已向 {user} 发送授权凭证"
+vault_ban_success: "已禁止 {user} 访问仓库"
+vault_remove_success: "已将 {user} 从授权列表移除"
+vault_list_title: "已授权用户"
+vault_list_empty: "当前没有已授权用户"
+vault_status_active: "正常"
+vault_status_banned: "已封禁"
+vault_expire_label_plain: "到期时间："
+vault_info_title: "仓库信息"
+vault_info_repo_name: "仓库名称："
+vault_info_plugin_count: "插件数量："
+vault_info_user_count: "授权用户数："
+vault_info_contact: "联系方式："
+vault_info_api_url: "插件源地址："
 #prune
 ## prune
 prune_des: 以此命令回复某条消息，将删除最新一条消息至该条消息之间的所有消息。限制：基于消息 ID 的 1000 条消息，大于 1000 条可能会触发删除消息过快限制。（非群组管理员只删除自己的消息）

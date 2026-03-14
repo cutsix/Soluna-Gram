@@ -301,7 +301,7 @@ hitokoto_type_meme: 迷因
 #plugin
 ## apt
 apt_des: 用於管理插件。
-apt_parameters: "{update|search|show|list|installs|status|install|remove|enable|disable|upload|export} <插件名稱/文件>"
+apt_parameters: "{update|search|show|list|installs|status|install|remove|enable|disable|upload|uploadpriv|export} <插件名稱/文件>"
 apt_name: "Soluna-Gram 插件管理器"
 apt_processing: 安裝插件中…
 apt_no_py: Error！無法獲取插件文件。
@@ -345,14 +345,54 @@ apt_plugin_des_short: 說明
 apt_repo_list: 倉庫組件列表
 apt_repo_empty: 當前插件倉庫沒有可用組件
 apt_source_des: "新增/刪除/檢視 自訂插件來源"
-apt_source_parameters: "[add/del] [自訂軟體來源連結]"
+apt_source_parameters: "[add/del] [自訂軟體來源連結] | add private <url> --token <token>"
 apt_source_not_found: 目前沒有自訂插件來源
 apt_source_header: "當前自訂插件來源:"
 apt_source_add_success: 添加成功
+apt_source_add_private_success: 私有來源已儲存
 apt_source_del_success: 刪除成功
 apt_source_add_failed: 新增失敗，此來源已存在
 apt_source_add_invalid: 新增失敗，此來源無效
 apt_source_del_failed: 刪除失敗，此來源不存在
+apt_private_repo_errors: "私有來源提示："
+apt_private_repo_unknown: "私有倉庫"
+apt_private_repo_contact: "倉庫管理員"
+apt_private_repo_token_expired: "⚠️ 你在 {repo_name} 的存取憑證已過期，請聯絡 {contact} 重新授權"
+apt_private_repo_forbidden: "⚠️ 你已被 {repo_name} 的管理員禁止存取"
+apt_private_repo_invalid_token: "⚠️ 你在 {repo_name} 的存取憑證無效，請聯絡倉庫管理員取得授權"
+apt_private_repo_auth_error: "⚠️ 存取 {repo_name} 時驗證失敗"
+apt_uploadpriv_not_private: "⚠️ 此插件不是私有插件，請使用 ,apt upload 命令"
+apt_uploadpriv_default: "⚠️ 此為私有插件，請尊重插件作者的勞動成果，切勿任意分享。"
+vault_des: "管理私有插件倉庫授權"
+vault_parameters: "<auth|ban|remove|list|info> [參數]"
+vault_usage: "用法：,vault auth [target] [天數] | ,vault ban [target] | ,vault remove [target] | ,vault list | ,vault info"
+vault_owner_only: "此命令僅限 owner 使用"
+vault_config_missing: "Vault 設定缺失，請先設定 vault_url 和 vault_admin_key"
+vault_request_failed: "Vault 請求失敗：{error}"
+vault_response_invalid: "Vault 回應內容缺少 token 欄位"
+vault_token_title: "私有倉庫授權憑證"
+vault_repo_label: "倉庫："
+vault_token_label: "Token："
+vault_expire_label: "有效期："
+vault_command_label: "請執行以下命令完成設定："
+vault_auto_delete_notice: "⚠️ 此訊息將在 2 分鐘後自動刪除"
+vault_expire_forever: "永久有效"
+vault_expire_days: "{days} 天"
+vault_auth_send_failed: "⚠️ 憑證傳送失敗，請確認對方帳號狀態正常後再試"
+vault_auth_success: "已向 {user} 傳送授權憑證"
+vault_ban_success: "已禁止 {user} 存取倉庫"
+vault_remove_success: "已將 {user} 自授權清單移除"
+vault_list_title: "已授權用戶"
+vault_list_empty: "目前沒有已授權用戶"
+vault_status_active: "正常"
+vault_status_banned: "已封禁"
+vault_expire_label_plain: "到期時間："
+vault_info_title: "倉庫資訊"
+vault_info_repo_name: "倉庫名稱："
+vault_info_plugin_count: "插件數量："
+vault_info_user_count: "授權用戶數："
+vault_info_contact: "聯絡方式："
+vault_info_api_url: "插件來源地址："
 #prune
 ## prune
 prune_des: 刪除回覆的訊息後的所有消息。

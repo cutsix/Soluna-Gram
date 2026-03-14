@@ -51,6 +51,8 @@ mtp_secret: ""
 # Apt Git source
 git_source: "https://raw.githubusercontent.com/cutsix/Soluna-Gram-Plugins/main/"
 git_ssh: ""
+vault_url: ""
+vault_admin_key: ""
 
 # Update Notice
 update_check: "False"

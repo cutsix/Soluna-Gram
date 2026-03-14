@@ -92,6 +92,10 @@ class Config:
                 scheme="http", hostname=PROXY_HTTP_ADDRESS, port=int(PROXY_HTTP_PORT)
             )
         GIT_SOURCE = os.environ.get("PGM_GIT_SOURCE", config.get("git_source", "")).strip()
+        VAULT_URL = os.environ.get("VAULT_URL", config.get("vault_url", "")).strip()
+        VAULT_ADMIN_KEY = os.environ.get(
+            "VAULT_ADMIN_KEY", config.get("vault_admin_key", "")
+        ).strip()
         try:
             with open(
                 f"languages{os.sep}built-in{os.sep}en.yml",

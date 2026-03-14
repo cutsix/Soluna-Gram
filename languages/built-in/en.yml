@@ -301,7 +301,7 @@ hitokoto_type_meme: trembling
 #plugin
 ## apt
 apt_des: Used to manage plugins installed to Soluna-Gram.
-apt_parameters: "{update|search|show|list|installs|status|install|remove|enable|disable|upload|export} <plugin name/file>"
+apt_parameters: "{update|search|show|list|installs|status|install|remove|enable|disable|upload|uploadpriv|export} <plugin name/file>"
 apt_name: "Soluna-Gram Plugins Manager"
 apt_processing: Installing plugins...
 apt_no_py: Something went wrong ~ Failed to get the plug-in file from the attachment.
@@ -345,14 +345,54 @@ apt_plugin_des_short: description
 apt_repo_list: repository plugin list
 apt_repo_empty: There are no available plugins in the current repository.
 apt_source_des: "Add/Del/View Custom Plugin Sources."
-apt_source_parameters: "[add/del] [custom plugin source links]"
+apt_source_parameters: "[add/del] [custom plugin source links] | add private <url> --token <token>"
 apt_source_not_found: There is currently no custom plugin source.
 apt_source_header: "Current custom plugin source:"
 apt_source_add_success: Add successful.
+apt_source_add_private_success: Private source saved.
 apt_source_del_success: Del successful.
 apt_source_add_failed: Add failed, this source already exists.
 apt_source_add_invalid: Add failed, this source is invalid.
 apt_source_del_failed: Deletion failed, this source does not exist.
+apt_private_repo_errors: "Private source warnings:"
+apt_private_repo_unknown: "Private Vault"
+apt_private_repo_contact: "the repository owner"
+apt_private_repo_token_expired: "⚠️ Your access token for {repo_name} has expired. Contact {contact} for a new authorization."
+apt_private_repo_forbidden: "⚠️ You have been forbidden from accessing {repo_name}."
+apt_private_repo_invalid_token: "⚠️ Your access token for {repo_name} is invalid. Contact the repository owner for authorization."
+apt_private_repo_auth_error: "⚠️ Authentication failed while accessing {repo_name}."
+apt_uploadpriv_not_private: "⚠️ This plugin is not a private plugin. Use ,apt upload instead."
+apt_uploadpriv_default: "⚠️ This is a private plugin. Please respect the author's work and do not share it without permission."
+vault_des: "Manage a private plugin vault."
+vault_parameters: "<auth|ban|remove|list|info> [args]"
+vault_usage: "Usage: ,vault auth [target] [days] | ,vault ban [target] | ,vault remove [target] | ,vault list | ,vault info"
+vault_owner_only: "This command is owner-only."
+vault_config_missing: "Vault configuration is missing. Please set vault_url and vault_admin_key first."
+vault_request_failed: "Vault request failed: {error}"
+vault_response_invalid: "Vault response is missing the token field."
+vault_token_title: "Private Vault Credential"
+vault_repo_label: "Repository: "
+vault_token_label: "Token: "
+vault_expire_label: "Validity: "
+vault_command_label: "Run the following command to finish setup:"
+vault_auto_delete_notice: "⚠️ This message will be deleted automatically in 2 minutes."
+vault_expire_forever: "Forever"
+vault_expire_days: "{days} days"
+vault_auth_send_failed: "⚠️ Failed to deliver the credential. Confirm the target account can receive private messages, then retry."
+vault_auth_success: "Credential sent to {user}."
+vault_ban_success: "Banned {user}."
+vault_remove_success: "Removed {user} from the vault."
+vault_list_title: "Authorized Users"
+vault_list_empty: "There are no authorized users right now."
+vault_status_active: "active"
+vault_status_banned: "banned"
+vault_expire_label_plain: "Expire at: "
+vault_info_title: "Vault Info"
+vault_info_repo_name: "Repository: "
+vault_info_plugin_count: "Plugins: "
+vault_info_user_count: "Authorized users: "
+vault_info_contact: "Contact: "
+vault_info_api_url: "API URL: "
 #prune
 ## prune
 prune_des: Replying to a message with this command will delete all messages between the latest message and the message. Limit, 1000 messages based on message ID, more than 1000 messages may trigger the limit of deleting messages too quickly. (Non-group administrators only delete their own messages)

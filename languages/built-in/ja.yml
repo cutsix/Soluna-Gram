@@ -301,7 +301,7 @@ hitokoto_type_meme: trembling
 #plugin
 ## apt
 apt_des: Used to manage plugins installed to Soluna-Gram.
-apt_parameters: "{update|search|show|list|installs|status|install|remove|enable|disable|upload|export} <plugin name/file>"
+apt_parameters: "{update|search|show|list|installs|status|install|remove|enable|disable|upload|uploadpriv|export} <plugin name/file>"
 apt_name: "Soluna-Gram Plugins Manager"
 apt_processing: Installing plugins...
 apt_no_py: Something went wrong ~ Failed to get the plug-in file from the attachment.
@@ -345,14 +345,54 @@ apt_plugin_des_short: descriptionの
 apt_repo_list: repository plugin list
 apt_repo_empty: There are no available plugins in the current repository.
 apt_source_des: "カスタムプラグインソースの追加/削除/表示。"
-apt_source_parameters: "[add/del] [カスタムプラグインのソースリンク]"
+apt_source_parameters: "[add/del] [カスタムプラグインのソースリンク] | add private <url> --token <token>"
 apt_source_not_found: 現在、カスタムプラグインソースはありません。
 apt_source_header: "現在のカスタムプラグインソース:"
 apt_source_add_success: 追加に成功しました。
+apt_source_add_private_success: 非公開ソースを保存しました。
 apt_source_del_success: 削除しました。
 apt_source_add_failed: 追加に失敗しました。このソースは既に存在します。
 apt_source_add_invalid: 追加に失敗しました。このソースは無効です。
 apt_source_del_failed: 削除に失敗しました。このソースは存在しません。
+apt_private_repo_errors: "非公開ソースの警告:"
+apt_private_repo_unknown: "Private Vault"
+apt_private_repo_contact: "repository owner"
+apt_private_repo_token_expired: "⚠️ {repo_name} のアクセス資格情報が期限切れです。{contact} に連絡して再認証してください。"
+apt_private_repo_forbidden: "⚠️ {repo_name} へのアクセスが禁止されています。"
+apt_private_repo_invalid_token: "⚠️ {repo_name} のアクセス資格情報が無効です。リポジトリ管理者に連絡してください。"
+apt_private_repo_auth_error: "⚠️ {repo_name} へのアクセス中に認証エラーが発生しました。"
+apt_uploadpriv_not_private: "⚠️ このプラグインは非公開プラグインではありません。 ,apt upload を使ってください。"
+apt_uploadpriv_default: "⚠️ これは非公開プラグインです。作者の成果を尊重し、無断で共有しないでください。"
+vault_des: "非公開プラグイン Vault を管理します。"
+vault_parameters: "<auth|ban|remove|list|info> [args]"
+vault_usage: "Usage: ,vault auth [target] [days] | ,vault ban [target] | ,vault remove [target] | ,vault list | ,vault info"
+vault_owner_only: "このコマンドは owner のみ実行できます。"
+vault_config_missing: "Vault 設定が不足しています。 vault_url と vault_admin_key を設定してください。"
+vault_request_failed: "Vault request failed: {error}"
+vault_response_invalid: "Vault response is missing the token field."
+vault_token_title: "Private Vault Credential"
+vault_repo_label: "Repository: "
+vault_token_label: "Token: "
+vault_expire_label: "Validity: "
+vault_command_label: "次のコマンドで設定を完了してください:"
+vault_auto_delete_notice: "⚠️ このメッセージは 2 分後に自動削除されます。"
+vault_expire_forever: "永久"
+vault_expire_days: "{days} 日"
+vault_auth_send_failed: "⚠️ 資格情報の送信に失敗しました。相手が個人メッセージを受け取れる状態か確認して再試行してください。"
+vault_auth_success: "{user} に資格情報を送信しました。"
+vault_ban_success: "{user} を Vault から禁止しました。"
+vault_remove_success: "{user} を Vault から削除しました。"
+vault_list_title: "Authorized Users"
+vault_list_empty: "承認済みユーザーはいません。"
+vault_status_active: "active"
+vault_status_banned: "banned"
+vault_expire_label_plain: "Expire at: "
+vault_info_title: "Vault Info"
+vault_info_repo_name: "Repository: "
+vault_info_plugin_count: "Plugins: "
+vault_info_user_count: "Authorized users: "
+vault_info_contact: "Contact: "
+vault_info_api_url: "API URL: "
 #prune
 ## prune
 prune_des: Replying to a message with this command will delete all messages between the latest message and the message. Limit, 1000 messages based on message ID, more than 1000 messages may trigger the limit of deleting messages too quickly. (Non-group administrators only delete their messages)
