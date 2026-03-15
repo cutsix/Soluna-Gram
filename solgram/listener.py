@@ -232,6 +232,7 @@ def listener(**args) -> CommandHandlerDecorator:
             except SystemExit:
                 await process_exit(start=False, _client=client, message=message)
                 await Hook.shutdown()
+                sys.exit(0)
             except BaseException as exc:
                 exc_info = sys.exc_info()[1]
                 exc_format = format_exc()
