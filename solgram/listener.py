@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import os
 import sys
 from time import strftime, gmtime, time
 from traceback import format_exc
@@ -232,7 +233,7 @@ def listener(**args) -> CommandHandlerDecorator:
             except SystemExit:
                 await process_exit(start=False, _client=client, message=message)
                 await Hook.shutdown()
-                sys.exit(0)
+                os._exit(0)
             except BaseException as exc:
                 exc_info = sys.exc_info()[1]
                 exc_format = format_exc()
@@ -357,7 +358,7 @@ def raw_listener(filter_s):
             except SystemExit:
                 await process_exit(start=False, _client=client, message=message)
                 await Hook.shutdown()
-                sys.exit(0)
+                os._exit(0)
             except (
                 UserNotParticipant,
                 MessageNotModified,
