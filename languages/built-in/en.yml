@@ -361,6 +361,7 @@ apt_private_repo_token_expired: "⚠️ Your access token for {repo_name} has ex
 apt_private_repo_forbidden: "⚠️ You have been forbidden from accessing {repo_name}."
 apt_private_repo_invalid_token: "⚠️ Your access token for {repo_name} is invalid. Contact the repository owner for authorization."
 apt_private_repo_auth_error: "⚠️ Authentication failed while accessing {repo_name}."
+apt_upload_is_private: "⚠️ This is a private plugin. Use ,apt uploadpriv instead."
 apt_uploadpriv_not_private: "⚠️ This plugin is not a private plugin. Use ,apt upload instead."
 apt_uploadpriv_default: "⚠️ This is a private plugin. Please respect the author's work and do not share it without permission."
 vault_des: "Manage a private plugin vault."

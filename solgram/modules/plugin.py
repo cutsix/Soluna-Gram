@@ -330,6 +330,11 @@ async def plugin(message: Message):
         if len(args) != 2:
             await message.edit(lang("arg_error"))
             return
+        plugin_manager.load_local_version_map()
+        source_info = plugin_manager.get_local_plugin_source(args[1])
+        if source_info and source_info.get("auth_type") == "private":
+            await message.edit(lang("apt_upload_is_private"))
+            return
         await send_plugin_file(
             message,
             args[1],

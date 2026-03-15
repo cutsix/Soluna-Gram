@@ -361,6 +361,7 @@ apt_private_repo_token_expired: "⚠️ 你在 {repo_name} 的访问凭证已过
 apt_private_repo_forbidden: "⚠️ 你已被 {repo_name} 的管理员禁止访问"
 apt_private_repo_invalid_token: "⚠️ 你在 {repo_name} 的访问凭证无效，请联系仓库管理员获取授权"
 apt_private_repo_auth_error: "⚠️ 访问 {repo_name} 时鉴权失败"
+apt_upload_is_private: "⚠️ 该插件是私有插件，请使用 ,apt uploadpriv 命令"
 apt_uploadpriv_not_private: "⚠️ 该插件不是私有插件，请使用 ,apt upload 命令"
 apt_uploadpriv_default: "⚠️ 此为私有插件，请尊重插件作者的劳动成果，切勿随意分享。"
 vault_des: "管理私有插件仓库授权"

@@ -361,6 +361,7 @@ apt_private_repo_token_expired: "⚠️ {repo_name} のアクセス資格情報�
 apt_private_repo_forbidden: "⚠️ {repo_name} へのアクセスが禁止されています。"
 apt_private_repo_invalid_token: "⚠️ {repo_name} のアクセス資格情報が無効です。リポジトリ管理者に連絡してください。"
 apt_private_repo_auth_error: "⚠️ {repo_name} へのアクセス中に認証エラーが発生しました。"
+apt_upload_is_private: "⚠️ このプラグインは非公開プラグインです。 ,apt uploadpriv を使ってください。"
 apt_uploadpriv_not_private: "⚠️ このプラグインは非公開プラグインではありません。 ,apt upload を使ってください。"
 apt_uploadpriv_default: "⚠️ これは非公開プラグインです。作者の成果を尊重し、無断で共有しないでください。"
 vault_des: "非公開プラグイン Vault を管理します。"

@@ -361,6 +361,7 @@ apt_private_repo_token_expired: "⚠️ 你在 {repo_name} 的存取憑證已過
 apt_private_repo_forbidden: "⚠️ 你已被 {repo_name} 的管理員禁止存取"
 apt_private_repo_invalid_token: "⚠️ 你在 {repo_name} 的存取憑證無效，請聯絡倉庫管理員取得授權"
 apt_private_repo_auth_error: "⚠️ 存取 {repo_name} 時驗證失敗"
+apt_upload_is_private: "⚠️ 此插件是私有插件，請使用 ,apt uploadpriv 命令"
 apt_uploadpriv_not_private: "⚠️ 此插件不是私有插件，請使用 ,apt upload 命令"
 apt_uploadpriv_default: "⚠️ 此為私有插件，請尊重插件作者的勞動成果，切勿任意分享。"
 vault_des: "管理私有插件倉庫授權"
